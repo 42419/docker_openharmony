@@ -16,7 +16,7 @@
 使用以下命令获取源码。
 
 ```shell
-git clone http://url/isoftstone-rk2206-openharmony3.0lts.git
+git clone https://gitee.com/isoh_edu/txsmartropenharmony.git
 ```
 
 ## docker编译
