@@ -175,7 +175,7 @@ void smart_home_thread(void *arg)
 // }
 
 /***************************************************************
- * 函数名称: iot_smart_hone_example
+ * 函数名称: iot_smart_home_example
  * 说    明: 开机自启动调用函数
  * 参    数: 无
  * 返 回 值: 无
@@ -201,7 +201,7 @@ void iot_smart_home_example()
 
     task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_home_thread;
     task_1.uwStackSize = 2048;
-    task_1.pcName = "smart hone thread";
+    task_1.pcName = "smart home thread";
     task_1.usTaskPrio = 24;
     
     ret = LOS_TaskCreate(&thread_id_1, &task_1);

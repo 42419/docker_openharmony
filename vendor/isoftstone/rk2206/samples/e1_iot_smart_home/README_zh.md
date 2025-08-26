@@ -1,6 +1,6 @@
 # 通晓开发板物联网综合实验开发——物联网智慧家居
 
-本例程演示如何在通晓开发板上实现物联网智慧家居应用案例。
+本例程演示如何在通晓开发板上基于通鸿云平台实现物联网智慧家居应用案例。
 
 ## 实验设计
 
@@ -33,7 +33,7 @@
 创建两个队列，用于传感器数据分别传输到不同的队列。创建了三个线程，一个用于读数据，一个用于显示与判断设备控制，一个用来接收iot数据。
 
 ```c
-void iot_smart_hone_example()
+void iot_smart_home_example()
 {
     unsigned int thread_id_1;
     unsigned int thread_id_2;
@@ -57,9 +57,9 @@ void iot_smart_hone_example()
         return;
     }
 
-    task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_hone_thread;
+    task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_home_thread;
     task_1.uwStackSize = 2048;
-    task_1.pcName = "smart hone thread";
+    task_1.pcName = "smart home thread";
     task_1.usTaskPrio = 24;
     ret = LOS_TaskCreate(&thread_id_1, &task_1);
     if (ret != LOS_OK)
@@ -92,12 +92,12 @@ void iot_smart_hone_example()
 }
 ```
 
-#### smart_hone_thread线程
+#### smart_home_thread线程
 
-在`smart_hone_thread`线程中初始化lcd、电机、led、语音模块设备。通过接收队列传输的数据进行判断显示。
+在`smart_home_thread`线程中初始化lcd、电机、led、语音模块设备。通过接收队列传输的数据进行判断显示。
 
 ```c
-void smart_hone_thread(void *arg)
+void smart_home_thread(void *arg)
 {
     double *data_ptr = NULL;
 
@@ -270,7 +270,7 @@ static void su_03t_thread(void *arg)
 
 #### device_read_thraed线程
 
-在`device_read_thraed`线程中初始化i2c传感器设备，将读取的数据放入队列中传输到`smart_hone_thread`与`su_03t_thread`线程中进行数据处理。
+在`device_read_thraed`线程中初始化i2c传感器设备，将读取的数据放入队列中传输到`smart_home_thread`与`su_03t_thread`线程中进行数据处理。
 
 ```c
 void device_read_thraed(void *arg)
@@ -478,16 +478,16 @@ if (rec_len != 0)
 
 ### 修改 BUILD.gn 文件
 
-修改 `vendor/isoftstone/rk2206/sample` 路径下 BUILD.gn 文件，指定 `iot_smart_hone_example` 参与编译。
+修改 `vendor/isoftstone/rk2206/sample` 路径下 BUILD.gn 文件，指定 `iot_smart_home_example` 参与编译。
 
 ```r
-"./e1_iot_smart_home:iot_smart_hone_example",
+"./e1_iot_smart_home:iot_smart_home_example",
 ```
 
-修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-liot_smart_hone_example` 参与编译。
+修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-liot_smart_home_example` 参与编译。
 
 ```r
-hardware_LIBS = -lhal_iothardware -lhardware -liot_smart_hone_example,
+hardware_LIBS = -lhal_iothardware -lhardware -liot_smart_home_example,
 ```
 
 ### 运行结果
