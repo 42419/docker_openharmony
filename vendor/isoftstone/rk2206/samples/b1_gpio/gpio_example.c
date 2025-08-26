@@ -45,12 +45,14 @@ void gpio_process()
             /* 输出低电平 */
             IoTGpioSetOutputVal(GPIO_ALARM_LIGHT, IOT_GPIO_VALUE0);
             cur = 1;
+
         }
         else
         {
             /* 输出高电平 */
             IoTGpioSetOutputVal(GPIO_ALARM_LIGHT, IOT_GPIO_VALUE1);
             cur = 0;
+            
         }
 
         /* 睡眠1秒 */

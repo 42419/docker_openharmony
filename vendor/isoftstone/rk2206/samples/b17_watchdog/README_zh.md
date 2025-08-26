@@ -55,7 +55,7 @@ void watchdog_process()
 修改 `vendor/isoftstone/rk2206/sample` 路径下 BUILD.gn 文件，指定 `watchdog_example` 参与编译。
 
 ```r
-"./b12_watchdog:watchdog_example",
+"./b17_watchdog:watchdog_example",
 ```
 
 修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-lwatchdog_example` 参与编译。

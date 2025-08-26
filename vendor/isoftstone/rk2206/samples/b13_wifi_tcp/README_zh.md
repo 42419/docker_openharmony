@@ -403,7 +403,7 @@ void tcp_server_msg_handle(int fd)
 修改 `vendor\isoftstone\rk2206\sample 路径下 BUILD.gn 文件，指定 `wifi_tcp_example` 参与编译。
 
 ```r
-"./b11_wifi_tcp:wifi_tcp_example",
+"./b13_wifi_tcp:wifi_tcp_example",
 ```
 
 修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-lwifi_tcp_example` 参与编译。

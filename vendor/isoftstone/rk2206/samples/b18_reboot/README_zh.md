@@ -87,7 +87,7 @@ void RebootDevice(unsigned int cause)
 修改 `vendor/isoftstone/rk2206/sample` 路径下 BUILD.gn 文件，指定 `reboot_example` 参与编译。
 
 ```r
-"./b13_reboot:reboot_example",
+"./b18_reboot:reboot_example",
 ```
 
 修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-lreboot_example` 参与编译。

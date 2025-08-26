@@ -71,7 +71,7 @@ int duty_fix(int duty){
     return duty;
 }
 //定义是否有渐变效果,1:设置渐变,0:取消渐变
-#define USE_SMOOTH 1
+#define USE_SMOOTH 0
 void rgb_led_process()
 {
     unsigned int ret;

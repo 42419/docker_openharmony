@@ -340,7 +340,7 @@ void udp_server_msg_handle(int fd)
 修改 `vendor\isoftstone\rk2206\sample 路径下 BUILD.gn 文件，指定 `wifi_udp_example` 参与编译。
 
 ```r
-"./b10_wifi_udp:wifi_udp_example",
+"./b12_wifi_udp:wifi_udp_example",
 ```
 
 修改 `device/rockchip/rk2206/sdk_liteos` 路径下 Makefile 文件，添加 `-lwifi_udp_example` 参与编译。

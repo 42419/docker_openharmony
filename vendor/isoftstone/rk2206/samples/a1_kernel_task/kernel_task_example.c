@@ -48,17 +48,17 @@ void task_two()
         LOS_Msleep(2000);
         count++;
 
-        if (count >= 5)
-        {
-            UINT32 taskStatus;
-            UINT32 ret=LOS_TaskStatusGet(thread_id1, &taskStatus);
-            printf("ret = %d\r\n",ret);
-            if((ret == LOS_OK) &&
-            (taskStatus != OS_TASK_STATUS_EXIT)){
-                printf("delete task 1\n");
-                LOS_TaskDelete(thread_id1);
-            }
-        }
+        // if (count >= 5)
+        // {
+        //     UINT32 taskStatus;
+        //     UINT32 ret=LOS_TaskStatusGet(thread_id1, &taskStatus);
+        //     printf("ret = %d\r\n",ret);
+        //     if((ret == LOS_OK) &&
+        //     (taskStatus != OS_TASK_STATUS_EXIT)){
+        //         printf("delete task 1\n");
+        //         LOS_TaskDelete(thread_id1);
+        //     }
+        // }
     }
 }
 

@@ -15,7 +15,7 @@ import("//build/lite/config/component/lite_component.gni")
 
 lite_component("app") {
     features = [
-
+    
         # 内核类
         # "a1_kernel_task:task_example",
         # "./a2_kernel_semaphore:semaphore_example",
@@ -39,13 +39,15 @@ lite_component("app") {
         #  "./b7_beep:beep_example",
         # "./b8_electrical_machinery:electrical_machinery_example",
         # "./b9_rgb_led:rgb_led_example",
-        # "./b10_wifi_udp:wifi_udp_example",  
-        # "./b11_wifi_tcp:wifi_tcp_example",
-        # "./b12_watchdog:watchdog_example",
-        # "./b13_reboot:reboot_example",
+        # "./b10_wifi_AP:wifi_ap_example" ,
+        # "./b11_wifi_STA:wifi_sta_example" ,
+        # "./b12_wifi_udp:wifi_udp_example",  
+        # "./b13_wifi_tcp:wifi_tcp_example",
         # "./b14_wifi_ap_tcp_server:wifi_AP_tcp_server" ,
         # "./b15_wifi_ap_udp_server:wifi_AP_udp_server" ,
         # "./b16_wifi_pair:wifi_pair" ,
+        # "./b17_watchdog:watchdog_example",
+        # "./b18_reboot:reboot_example",
 
         # 基础设备类
         # "./c1_gas_sensor:gas_sensor_example",
@@ -61,7 +63,8 @@ lite_component("app") {
         # "./d2_smart_security:smart_security_example",
 
         # Iot综合实验类
-        "./e1_iot_smart_home:iot_smart_home_example",
+        # "./e1_iot_smart_home:iot_smart_home_example",
+        "./e1_iot_smart_home_hwiot:iot_smart_home_example",
         # "./e2_iot_smart_security:iot_smart_security_example",
     ]
 

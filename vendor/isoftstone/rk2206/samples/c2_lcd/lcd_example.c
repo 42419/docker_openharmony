@@ -73,8 +73,9 @@ void lcd_process(void *arg)
     int count =0;
     while (1)
     {
+          
         printf("************Lcd Example***********\n");
-        lcd_show_picture(15, 0, 210, 62, &gImage_isoftstone[0]); 
+        
         lcd_show_string(0, 70, "Welcome to TX-SMART-R!", LCD_RED, LCD_WHITE, 16, 0);
         lcd_show_string(0, 88, "URL: https://www.issedu.com/", LCD_RED, LCD_WHITE, 16, 0);
         lcd_show_chinese(0, 108,"开源鸿蒙" , LCD_RED, LCD_GRAY, 32, 0);
@@ -86,11 +87,6 @@ void lcd_process(void *arg)
         lcd_show_string(0, 190, "Increaseing Num:", LCD_BLACK, LCD_WHITE, 16, 0);
         lcd_show_float_num1(128, 190, t, 4, LCD_BLACK, LCD_WHITE, 16);
         t += 0.11;
-        
-        lcd_draw_circle(80,80,40,LCD_RED);
-        lcd_draw_rectangle(100,40,160,80,LCD_BROWN);
-        lcd_draw_triangle(160,100,180,40,180,100,LCD_MAGENTA);
-        lcd_show_chinese(100, 120, "鸿蒙", LCD_RED, LCD_GRAYBLUE, 16, 0);
 
         lcd_fill(0, 220, LCD_W, LCD_H, LCD_WHITE);
         lcd_show_chinese(0, 220, chinese_string, LCD_RED, LCD_GRAYBLUE, cur_sizey, 0);

@@ -11,20 +11,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//drivers/adapter/khdf/liteos_m/hdf.gni")
+import("//device/rockchip/rk2206/sdk_liteos/board.gni")
 
-static_library("gpio_example") {
+static_library("wifi_ap_example") {
     sources = [
-        "gpio_example.c",
-        #  "gpio_demo.c" ,
+        "wifi_ap_example.c",
     ]
 
     include_dirs = [
         "//utils/native/lite/include",
+        "//device/rockchip/hardware/project/rk2206/src",
+        "//device/rockchip/hardware/lib/hal/inc/",
+        "//device/rockchip/rk2206/adapter/include",
+        "//device/rockchip/rk2206/sdk_liteos/board/include",
         "include",
-        "//base/iot_hardware/peripheral/interfaces/kits",
+        "//third_party/lwip/src/include/lwip"
     ]
 
     deps = [
         "//device/rockchip/hardware:hardware",
+        "//kernel/liteos_m/kal/posix"
     ]
 }
