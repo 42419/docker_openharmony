@@ -4,15 +4,15 @@
 
 本示例将演示如何在通晓开发板上使用pwm驱动电机。
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![电机原理图](/vendor/isoftstone/rk2206/docs/figures/motor/电机原理图.jpg)
+![电机原理图](../../docs/figures/motor/电机原理图.jpg)
 
-![电机与开发板连接](/vendor/isoftstone/rk2206/docs/figures/motor/电机与开发板连接.jpg)
+![电机与开发板连接](../../docs/figures/motor/电机与开发板连接.jpg)
 
 从硬件原理图可以知道：
 

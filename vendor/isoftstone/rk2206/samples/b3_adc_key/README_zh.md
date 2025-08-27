@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用ADC做按键测试。
 
-![通晓开发板-RK2206](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板-RK2206](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![按键原理图](/vendor/isoftstone/rk2206/docs/figures/adc/按键原理图.jpg)
+![按键原理图](../../docs/figures/adc/按键原理图.jpg)
 
-![按键与开发板连接](/vendor/isoftstone/rk2206/docs/figures/adc/按键与开发板连接.jpg)
+![按键与开发板连接](../../docs/figures/adc/按键与开发板连接.jpg)
 
 从原理图可以看出当按键按下后，不同阻值的电阻会对3.3v电压进行分压：
 

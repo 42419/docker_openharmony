@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用I2C控制SHT30获取温湿度
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![eeprom原理图](/vendor/isoftstone/rk2206/docs/figures/sht30/sht30原理图.jpg)
+![eeprom原理图](../../docs/figures/sht30/sht30原理图.jpg)
 
-![eeprom与开发板连接](/vendor/isoftstone/rk2206/docs/figures/sht30/sht30与开发板连接.jpg)
+![eeprom与开发板连接](../../docs/figures/sht30/sht30与开发板连接.jpg)
 
 从原理图中可以看出sht30与开发板的I2C0(GPIO0_A1\GPIO0_A0)连接。
 
@@ -33,7 +33,7 @@ if (ret != IOT_SUCCESS)
 
 设置测量周期，通过I2C总线下发测量周期命令0x2236，选择高重复性测量，每秒测量2次。
 
-![sht30_meas_cmd](/vendor/isoftstone/rk2206/docs/figures/sht30/sht30_meas_cmd.png)
+![sht30_meas_cmd](../../docs/figures/sht30/sht30_meas_cmd.png)
 
 ```c
 IoTI2cWrite(SHT30_I2C_PORT, SHT30_I2C_ADDRESS, send_data, send_len); 
@@ -87,7 +87,7 @@ void sht30_read_data(double *dat)
 
 温度转换：
 
-![calc_temp](/vendor/isoftstone/rk2206/docs/figures/sht30/calc_temp.png)
+![calc_temp](../../docs/figures/sht30/calc_temp.png)
 
 ```c
 static float sht30_calc_temperature(uint16_t u16sT)
@@ -106,7 +106,7 @@ static float sht30_calc_temperature(uint16_t u16sT)
 
 湿度转换：
 
-![calc_lum](/vendor/isoftstone/rk2206/docs/figures/sht30/calc_lum.png)
+![calc_lum](../../docs/figures/sht30/calc_lum.png)
 
 ```c
 static float sht30_calc_RH(uint16_t u16sRH)

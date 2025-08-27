@@ -2,23 +2,23 @@
 
 本示例将演示如何在通晓开发板上使用i2c做i2c从设备地址扫描操作。
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![i2c0](/vendor/isoftstone/rk2206/docs/figures/i2c_scan/i2c0.jpg)
+![i2c0](../../docs/figures/i2c_scan/i2c0.jpg)
 
 挂载在i2c0上的设备：
 
-![i2c0挂载设备1](/vendor/isoftstone/rk2206/docs/figures/i2c_scan/i2c0挂载设备1.jpg)
+![i2c0挂载设备1](../../docs/figures/i2c_scan/i2c0挂载设备1.jpg)
 
-![i2c0挂载设备2](/vendor/isoftstone/rk2206/docs/figures/i2c_scan/i2c0挂载设备2.jpg)
+![i2c0挂载设备2](../../docs/figures/i2c_scan/i2c0挂载设备2.jpg)
 
-![i2c0挂载设备3](/vendor/isoftstone/rk2206/docs/figures/i2c_scan/i2c0挂载设备3.jpg)
+![i2c0挂载设备3](../../docs/figures/i2c_scan/i2c0挂载设备3.jpg)
 
-![i2c0挂载设备4](/vendor/isoftstone/rk2206/docs/figures/i2c_scan/i2c0挂载设备4.jpg)
+![i2c0挂载设备4](../../docs/figures/i2c_scan/i2c0挂载设备4.jpg)
 
 地址分别为：
 

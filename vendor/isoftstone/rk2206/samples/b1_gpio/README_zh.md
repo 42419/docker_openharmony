@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用GPIO做输入输出操作。
 
-![通晓开发板-RK2206](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板-RK2206](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![报警灯原理图](/vendor/isoftstone/rk2206/docs/figures/gpio/报警灯原理图.jpg)
+![报警灯原理图](../../docs/figures/gpio/报警灯原理图.jpg)
 
-![报警灯与开发板连接](/vendor/isoftstone/rk2206/docs/figures/gpio/报警灯与开发板连接.jpg)
+![报警灯与开发板连接](../../docs/figures/gpio/报警灯与开发板连接.jpg)
 
 从硬件原理图可以知道：
 - GPIO0_PA5引脚输出高电平时，三极管导通，LED亮。

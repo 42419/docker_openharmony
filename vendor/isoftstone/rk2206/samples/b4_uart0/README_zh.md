@@ -2,7 +2,7 @@
 
 本示例将演示如何在通晓开发板上使用额外串口打印
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
@@ -121,11 +121,11 @@ HelloWorld!
 注意：如果你使用MobaXterm，并且发现串口0能打印，但是换行有问题，则：
 （1）在MobaXterm界面中按住右边的Ctrl按键 + 右击鼠标，弹出菜单，选择`Change terminal settings...`，如下图所示：
 
-![右击菜单图](/vendor/isoftstone/rk2206/docs/figures/uart0/MobaXterm_右击菜单.png)
+![右击菜单图](../../docs/figures/uart0/MobaXterm_右击菜单.png)
 
 （2）将2个选项勾选上即可。如下图所示：
 
-![勾选图](/vendor/isoftstone/rk2206/docs/figures/uart0/MobaXterm_勾选.png)
+![勾选图](../../docs/figures/uart0/MobaXterm_勾选.png)
 
 ## 注意事项
 

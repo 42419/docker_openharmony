@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用I2C控制MPU6050获取值
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![mpu6050原理图](/vendor/isoftstone/rk2206/docs/figures/mpu6050/mpu6050原理图.jpg)
+![mpu6050原理图](../../docs/figures/mpu6050/mpu6050原理图.jpg)
 
-![mpu6050与开发板连接](/vendor/isoftstone/rk2206/docs/figures/mpu6050/mpu6050与开发板连接.jpg)
+![mpu6050与开发板连接](../../docs/figures/mpu6050/mpu6050与开发板连接.jpg)
 
 从原理图中可以看出sht30与开发板的I2C0(GPIO0_A1\GPIO0_A0)连接。
 
@@ -22,31 +22,31 @@
 
 MPU6050_RA_PWR_MGMT_1电源管理寄存器，DEVICE_RESET复位唤醒传感器。
 
-![MPU6050_RA_PWR_MGMT_1](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_PWR_MGMT_1.png)
+![MPU6050_RA_PWR_MGMT_1](../../docs/figures/mpu6050/MPU6050_RA_PWR_MGMT_1.png)
 
 MPU6050_RA_INT_ENABLE中断使能寄存器，中断控制。
 
-![MPU6050_RA_INT_ENABLE](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_INT_ENABLE.png)
+![MPU6050_RA_INT_ENABLE](../../docs/figures/mpu6050/MPU6050_RA_INT_ENABLE.png)
 
 MPU6050_RA_USER_CTRL用户控制寄存器，关闭I2C主模式。
 
-![MPU6050_RA_USER_CTRL](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_USER_CTRL.png)
+![MPU6050_RA_USER_CTRL](../../docs/figures/mpu6050/MPU6050_RA_USER_CTRL.png)
 
 MPU6050_RA_FIFO_EN FIFO使能寄存器，关闭FIFO。
 
-![MPU6050_RA_FIFO_EN](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_FIFO_EN.png)
+![MPU6050_RA_FIFO_EN](../../docs/figures/mpu6050/MPU6050_RA_FIFO_EN.png)
 
 MPU6050_RA_INT_PIN_CFG INT管脚/旁路控制寄存器。
 
-![MPU6050_RA_INT_PIN_CFG](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_INT_PIN_CFG.png)
+![MPU6050_RA_INT_PIN_CFG](../../docs/figures/mpu6050/MPU6050_RA_INT_PIN_CFG.png)
 
 MPU6050_RA_CONFIG配置寄存器，配置为外部引脚采样，DLPF数字低通滤波器。
 
-![MPU6050_RA_CONFIG](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_CONFIG.png)
+![MPU6050_RA_CONFIG](../../docs/figures/mpu6050/MPU6050_RA_CONFIG.png)
 
 MPU6050_RA_ACCEL_CONFIG加速配置寄存器，配置加速度传感器量程和高通滤波器。
 
-![MPU6050_RA_ACCEL_CONFIG](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_RA_ACCEL_CONFIG.png)
+![MPU6050_RA_ACCEL_CONFIG](../../docs/figures/mpu6050/MPU6050_RA_ACCEL_CONFIG.png)
 
 ```c
 IoTI2cInit(MPU6050_I2C_PORT, EI2C_FRE_100K);
@@ -92,7 +92,7 @@ void mpu6050_read_data(short *dat)
 
 MPU6050_ACC_OUT角速度数据寄存器，只读，包括X轴、Y轴和Z轴。
 
-![MPU6050_ACC_OUT](/vendor/isoftstone/rk2206/docs/figures/mpu6050/MPU6050_ACC_OUT.png)
+![MPU6050_ACC_OUT](../../docs/figures/mpu6050/MPU6050_ACC_OUT.png)
 
 ```c
 static void mpu6050_read_acc(short *acc_data)

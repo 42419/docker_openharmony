@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用mq2气体传感器。
 
-![通晓开发板-RK2206](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板-RK2206](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![气体传感器原理图](/vendor/isoftstone/rk2206/docs/figures/gas_sensor/气体传感器原理图.jpg)
+![气体传感器原理图](../../docs/figures/gas_sensor/气体传感器原理图.jpg)
 
-![气体传感器与开发板连接](/vendor/isoftstone/rk2206/docs/figures/gas_sensor/气体传感器与开发板连接.jpg)
+![气体传感器与开发板连接](../../docs/figures/gas_sensor/气体传感器与开发板连接.jpg)
 
 从原理图中可以看到mq2气体传感器与开发板的GPIO0_C4连接。GPIO0_C4对应ADC通道4。
 

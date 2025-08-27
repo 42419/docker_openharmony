@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板控制NFC
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![nfc硬件原理图](/vendor/isoftstone/rk2206/docs/figures/nfc/nfc硬件原理图.jpg)
+![nfc硬件原理图](../../docs/figures/nfc/nfc硬件原理图.jpg)
 
-![nfc硬件与开发板连接](/vendor/isoftstone/rk2206/docs/figures/nfc/nfc硬件与开发板连接.jpg)
+![nfc硬件与开发板连接](../../docs/figures/nfc/nfc硬件与开发板连接.jpg)
 
 从原理图中可以看到NFC芯片与开发板上的GPIO0_D5和GPIO0_D6连接。由于GPIO0_D5和GPIO0_D6是1.8V输出，所以使用了电压转换芯片。
 

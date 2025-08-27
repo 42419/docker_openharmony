@@ -4,7 +4,7 @@
 
 本例程演示如何在通晓开发板上使用鸿蒙LiteOS-M内核接口，进行任务编程开发。例程创建两个任务，任务1 1s执行一次，任务2 2s执行一次。
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 程序设计
 

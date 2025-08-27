@@ -2,13 +2,13 @@
 
 本示例将演示如何在通晓开发板上LCD液晶屏显示
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![](/vendor/isoftstone/rk2206/docs/figures/2.4inch_lcd/液晶屏原理图.jpg)
+![](../../docs/figures/2.4inch_lcd/液晶屏原理图.jpg)
 
 #### 硬件接口说明
 
@@ -362,7 +362,7 @@ LCD型号为ST7789V，采用SPI通信方式，数据传输协议如下：
 
 数据传输时序图如下：
 
-![](/vendor/isoftstone/rk2206/docs/figures/2.4inch_lcd/ST7789V_数据传输模式.png "LCD数据传输时序图")
+![](../../docs/figures/2.4inch_lcd/ST7789V_数据传输模式.png "LCD数据传输时序图")
 
 LCD使用的是SPI协议，SPI_CS与GPIO0_PC0相连接，SPI_CLK与GPIO0_PC1相连接，SPI_MOSI与GPIO0_PC2相连接，RES与GPIO0_PC3相连接，DC与GPIO0_PC6相连接。
 

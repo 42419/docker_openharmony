@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用I2C控制EEPROM读写
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![eeprom原理图](/vendor/isoftstone/rk2206/docs/figures/eeprom/eeprom原理图.jpg)
+![eeprom原理图](../../docs/figures/eeprom/eeprom原理图.jpg)
 
-![eeprom与开发板连接](/vendor/isoftstone/rk2206/docs/figures/eeprom/eeprom与开发板连接.jpg)
+![eeprom与开发板连接](../../docs/figures/eeprom/eeprom与开发板连接.jpg)
 
 从原理图中可以看出eeprom与开发板的I2C0(GPIO0_A1\GPIO0_A0)连接。
 

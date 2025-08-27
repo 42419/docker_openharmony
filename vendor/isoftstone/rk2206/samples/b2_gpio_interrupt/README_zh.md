@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用GPIO做输入输出操作。
 
-![通晓开发板-RK2206](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板-RK2206](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![人体感应传感器原理图](/vendor/isoftstone/rk2206/docs/figures/gpio_interrupt/人体感应传感器原理图.jpg)
+![人体感应传感器原理图](../../docs/figures/gpio_interrupt/人体感应传感器原理图.jpg)
 
-![人体感应与开发板连接](/vendor/isoftstone/rk2206/docs/figures/gpio_interrupt/人体感应与开发板连接.jpg)
+![人体感应与开发板连接](../../docs/figures/gpio_interrupt/人体感应与开发板连接.jpg)
 
 从硬件原理图可以知道，GPIO0_A4与传感器连接。
 - 人体感应传感器检测到人体，会由低电平上升为高电平。

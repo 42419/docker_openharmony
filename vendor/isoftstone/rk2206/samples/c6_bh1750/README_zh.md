@@ -2,15 +2,15 @@
 
 本示例将演示如何在通晓开发板上使用I2C控制BH1750获取光照强度
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![bh1750原理图](/vendor/isoftstone/rk2206/docs/figures/bh1750/bh1750原理图.jpg)
+![bh1750原理图](../../docs/figures/bh1750/bh1750原理图.jpg)
 
-![bh1750与开发板连接](/vendor/isoftstone/rk2206/docs/figures/bh1750/bh1750与开发板连接.jpg)
+![bh1750与开发板连接](../../docs/figures/bh1750/bh1750与开发板连接.jpg)
 
 从原理图中可以看出sht30与开发板的I2C0(GPIO0_A1\GPIO0_A0)连接。
 
@@ -28,7 +28,7 @@ if (ret != IOT_SUCCESS)
 }
 ```
 
-![bh1750_cmd](/vendor/isoftstone/rk2206/docs/figures/bh1750/bh1750_cmd.png)
+![bh1750_cmd](../../docs/figures/bh1750/bh1750_cmd.png)
 
 配置为连续H分辨率模式
 

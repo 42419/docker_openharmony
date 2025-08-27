@@ -4,15 +4,15 @@
 
 本示例将演示如何在通晓开发板上使用pwm驱动RGB灯。
 
-![通晓开发板](/vendor/isoftstone/rk2206/docs/figures/tx_smart_r-rk2206.jpg)
+![通晓开发板](../../docs/figures/tx_smart_r-rk2206.jpg)
 
 ## 实验设计
 
 ### 硬件设计
 
-![rgb原理图](/vendor/isoftstone/rk2206/docs/figures/rgb/rgb原理图.jpg)
+![rgb原理图](../../docs/figures/rgb/rgb原理图.jpg)
 
-![rgb与开发板连接](/vendor/isoftstone/rk2206/docs/figures/rgb/rgb与开发板连接.jpg)
+![rgb与开发板连接](../../docs/figures/rgb/rgb与开发板连接.jpg)
 
 从硬件原理图可以知道：
 
