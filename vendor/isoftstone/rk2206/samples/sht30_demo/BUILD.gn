@@ -1,0 +1,18 @@
+static_library("sht30_demo"){
+
+    sources = [
+        "sht30_demo.c",
+        "src/sht30.c",
+    ]
+
+     include_dirs = [
+        "//utils/native/lite/include",
+        "include",
+        "//base/iot_hardware/peripheral/interfaces/kits",
+    ]
+
+    deps = [
+        "//device/rockchip/hardware:hardware",
+    ]
+
+}

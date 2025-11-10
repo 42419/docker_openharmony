@@ -25,8 +25,8 @@
 #include "su_03t.h"
 #include "iot.h"
 
-#define ROUTE_SSID "软通教育"
-#define ROUTE_PASSWORD "88888888"
+#define ROUTE_SSID "xiaomoV1"
+#define ROUTE_PASSWORD "15139977792"
 
 #define MSG_QUEUE_LENGTH                                16
 #define BUFFER_LEN                                      50

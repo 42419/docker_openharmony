@@ -28,11 +28,14 @@
 #include "picture.h"
 #include "adc_key.h"
 
-#define ROUTE_SSID      "MY_SW"          // WiFi账号
-#define ROUTE_PASSWORD "12345678"       // WiFi密码
+// 默认WiFi配置
+#define DEFAULT_ROUTE_SSID      "xiaomoV1"
+#define DEFAULT_ROUTE_PASSWORD  "15139977792"
 
 #define MSG_QUEUE_LENGTH                                16
 #define BUFFER_LEN                                      50
+#define WIFI_CONNECT_RETRY_COUNT                        3
+#define WIFI_CONNECT_RETRY_DELAY                        3000
 
 
 /***************************************************************
@@ -44,29 +47,68 @@
 void iot_thread(void *args) {
   uint8_t mac_address[12] = {0x00, 0xdc, 0xb6, 0x90, 0x01, 0x00,0};
 
-  char ssid[32]=ROUTE_SSID;
-  char password[32]=ROUTE_PASSWORD;
-  char mac_addr[32]={0};
-
+  // 尝试从Flash读取WiFi配置，如果不存在则使用默认配置
+  char ssid[32] = {0};
+  char password[32] = {0};
+  char mac_addr[32] = {0};
+  
   FlashDeinit();
   FlashInit();
 
+  // 尝试从Flash获取配置
+  if (VendorGet(VENDOR_ID_WIFI_ROUTE_SSID, ssid, sizeof(ssid)) != 0 || 
+      strlen(ssid) == 0) {
+      // 如果Flash中没有配置或读取失败，使用默认配置
+      strncpy(ssid, DEFAULT_ROUTE_SSID, sizeof(ssid) - 1);
+      printf("Using default SSID: %s\n", ssid);
+  }
+  
+  if (VendorGet(VENDOR_ID_WIFI_ROUTE_PASSWD, password, sizeof(password)) != 0 || 
+      strlen(password) == 0) {
+      // 如果Flash中没有配置或读取失败，使用默认配置
+      strncpy(password, DEFAULT_ROUTE_PASSWORD, sizeof(password) - 1);
+      printf("Using default password: %s\n", password);
+  }
+
   VendorSet(VENDOR_ID_WIFI_MODE, "STA", 3); // 配置为Wifi STA模式
   VendorSet(VENDOR_ID_MAC, mac_address, 6); // 多人同时做该实验，请修改各自不同的WiFi MAC地址
-  VendorSet(VENDOR_ID_WIFI_ROUTE_SSID, ssid, sizeof(ssid));
-  VendorSet(VENDOR_ID_WIFI_ROUTE_PASSWD, password,sizeof(password));
+  VendorSet(VENDOR_ID_WIFI_ROUTE_SSID, ssid, strlen(ssid) + 1);
+  VendorSet(VENDOR_ID_WIFI_ROUTE_PASSWD, password, strlen(password) + 1);
 
+  int wifi_retry_count = 0;
+  
 reconnect:
-  SetWifiModeOff();
-  int ret = SetWifiModeOn();
-  if(ret != 0){
-    printf("wifi connect failed,please check wifi config and the AP!\n");
+  if (wifi_retry_count >= WIFI_CONNECT_RETRY_COUNT) {
+    printf("WiFi connection failed after %d attempts.\n", WIFI_CONNECT_RETRY_COUNT);
+    printf("Please check:\n");
+    printf("1. SSID: %s exists and is accessible\n", ssid);
+    printf("2. Password: %s is correct\n", password);
+    printf("3. WiFi signal strength is sufficient\n");
+    printf("4. Router is functioning properly\n");
     return;
   }
+  
+  SetWifiModeOff();
+  printf("Attempting to connect to WiFi (attempt %d/%d)...\n", wifi_retry_count + 1, WIFI_CONNECT_RETRY_COUNT);
+  printf("SSID: %s\n", ssid);
+  // 出于安全原因，不打印密码到日志中
+  // printf("Password: %s\n", password);
+  
+  int ret = SetWifiModeOn();
+  if(ret != 0){
+    printf("WiFi connect failed, error code: %d. Retrying in %d ms...\n", ret, WIFI_CONNECT_RETRY_DELAY);
+    wifi_retry_count++;
+    LOS_Msleep(WIFI_CONNECT_RETRY_DELAY);
+    goto reconnect;
+  }
+  
+  printf("WiFi connected successfully!\n");
   mqtt_init();
 
   while (1) {
     if (!wait_message()) {
+      printf("MQTT connection lost. Reconnecting to WiFi...\n");
+      wifi_retry_count = 0; // Reset retry count for next connection
       goto reconnect;
     }
     LOS_Msleep(1);

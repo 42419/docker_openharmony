@@ -15,6 +15,7 @@ import("//build/lite/config/component/lite_component.gni")
 
 lite_component("app") {
     features = [
+        # "sht30_demo:sht30_demo",
     
         # 内核类
         # "a1_kernel_task:task_example",

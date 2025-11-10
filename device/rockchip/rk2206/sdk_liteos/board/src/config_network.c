@@ -50,8 +50,8 @@ extern "C" {
 // 该处为Wifi模式默认的SSID和密码，即Flash如为空，则填写默认
 // 如需要修改，请直接调用set_wifi_config_route_ssid()和set_wifi_config_route_passwd()函数
 // 如需要修改，可以TaskConfigWifiModeEntry()启用上述2个函数
-#define ROUTE_SSID              "软通教育"
-#define ROUTE_PASSWORD          "88888888"
+#define ROUTE_SSID              "xiaomoV1"
+#define ROUTE_PASSWORD          "15139977792"
 // 该处为AP模式的默认SSID和密码，即Flash如为空，则填写默认
 // 如需要修改，请直接调用set_wifi_config_ssid()和set_wifi_config_passwd()函数
 #define AP_SSID                 "软通教育"
@@ -651,30 +651,9 @@ WifiErrorCode SetWifiModeOn()
 	
     FlashInit();
     
-    if (LZ_HARDWARE_SUCCESS == VendorGet(VENDOR_ID_SN, temp, WIFI_MAX_SN_LEN))
-    {
-        wifi_config_t wifi_config = {0};
-        if (strcmp(temp, WIFI_SN) != 0)
-        {
-            LZ_HARDWARE_LOGD(LOG_TAG, "rknetwork get sn from vendor id, sn is error(%s)\n", temp);
-            LZ_HARDWARE_LOGD(LOG_TAG, "rknetwork wifi config set default\n");
-            set_default_wifi_config();
-            get_wifi_config(printf, &wifi_config);
-        }
-        
-        memset(temp, 0, WIFI_MAX_SN_LEN);
-        VendorGet(VENDOR_ID_WIFI_ROUTE_SSID,   temp, WIFI_MAX_SN_LEN);
-        
-        memcpy(g_wificonfig.ssid, temp, sizeof(g_wificonfig.ssid));
-        memset(temp, 0, WIFI_MAX_SN_LEN);
-        VendorGet(VENDOR_ID_WIFI_ROUTE_PASSWD, temp, WIFI_MAX_SN_LEN);
-        memcpy(g_wificonfig.psk, temp, sizeof(g_wificonfig.psk));
-    }
-    else
-    {
-        memcpy_s(g_wificonfig.ssid, sizeof(g_wificonfig.ssid), ROUTE_SSID, sizeof(ROUTE_SSID));
-        memcpy_s(g_wificonfig.psk, sizeof(g_wificonfig.psk), ROUTE_PASSWORD, sizeof(ROUTE_PASSWORD));
-    }
+    // 强制使用宏定义的WiFi配置，而不是Flash中存储的配置
+    memcpy_s(g_wificonfig.ssid, sizeof(g_wificonfig.ssid), ROUTE_SSID, sizeof(ROUTE_SSID));
+    memcpy_s(g_wificonfig.psk, sizeof(g_wificonfig.psk), ROUTE_PASSWORD, sizeof(ROUTE_PASSWORD));
     
     LZ_HARDWARE_LOGD(LOG_TAG, "rknetwork SetWifiModeOn\n");
     LZ_HARDWARE_LOGD(LOG_TAG, "rknetwork g_wificonfig.ssid %s\n", g_wificonfig.ssid);
@@ -771,8 +750,8 @@ static void TaskConfigApModeEntry()
 static void TaskConfigWifiModeEntry()
 {
     // 如果需要修改Wifi的SSID和密码，可以在此启用下述接口
-    set_wifi_config_route_ssid(printf,   "软通教育");     // 路由的WiFi名称
-    set_wifi_config_route_passwd(printf, "88888888");    // 路由器WiFi密码
+    set_wifi_config_route_ssid(printf,   "xiaomoV1");     // 路由的WiFi名称
+    set_wifi_config_route_passwd(printf, "15139977792");    // 路由器WiFi密码
     
 init:
     SetWifiModeOff();

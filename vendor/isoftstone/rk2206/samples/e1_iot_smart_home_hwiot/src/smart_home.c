@@ -31,6 +31,9 @@
 #include "lcd.h"
 #include "string.h"
 
+// 添加lcd_show_text函数声明
+extern void lcd_show_text(int x, int y, char *str, int fc, int bc, int font_size, int mode);
+
 static bool auto_state = false;
 static bool network_state = false;
 
@@ -49,7 +52,7 @@ lcd_menu_t fan_menu={
         .fc=LCD_MAGENTA,
         .bc=LCD_WHITE,
         .font_size=24,
-        .name="风扇关",
+        .name="阀门关",
     },
     .enterFunc=fan_menu_entry,
     .exitFunc=NULL,
@@ -220,30 +223,51 @@ void smart_home_key_process(int key_no)
         lcd_menu_selected_move_right();
     }
 }
-/**
- * @brief 物联网的指令处理函数
- * 
- * @param iot_cmd iot的指令
- */
-void smart_home_iot_cmd_process(int iot_cmd)
+
+/***************************************************************
+* 函数名称: smart_home_iot_cmd_process
+* 说    明: 处理来自云端的IoT命令
+* 参    数: int cmd - 命令类型
+* 返 回 值: 无
+***************************************************************/
+void smart_home_iot_cmd_process(int cmd)
 {
-    switch (iot_cmd)
+    switch (cmd)
     {
         case IOT_CMD_LIGHT_ON:
+            printf("Processing IOT_CMD_LIGHT_ON\n");
+            // 直接调用控制硬件的函数
             light_set_state(true);
             lcd_set_light_state(true);
+            lcd_show_ui();
             break;
+            
         case IOT_CMD_LIGHT_OFF:
+            printf("Processing IOT_CMD_LIGHT_OFF\n");
+            // 直接调用控制硬件的函数
             light_set_state(false);
             lcd_set_light_state(false);
+            lcd_show_ui();
             break;
+            
         case IOT_CMD_MOTOR_ON:
+            printf("Processing IOT_CMD_MOTOR_ON\n");
+            // 直接调用控制硬件的函数
             motor_set_state(true);
             lcd_set_motor_state(true);
+            lcd_show_ui();
             break;
+            
         case IOT_CMD_MOTOR_OFF:
+            printf("Processing IOT_CMD_MOTOR_OFF\n");
+            // 直接调用控制硬件的函数
             motor_set_state(false);
             lcd_set_motor_state(false);
+            lcd_show_ui();
+            break;
+            
+        default:
+            printf("Unknown IoT command: %d\n", cmd);
             break;
     }
 }
@@ -312,8 +336,12 @@ void smart_home_su03t_cmd_process(int su03t_cmd)
 ***************************************************************/
 void lcd_show_ui(void)
 {
-
-    lcd_show_chinese(96, 0, "智慧家居", LCD_RED, LCD_WHITE, 32, 0);
+    // 分别显示每个字符以确保完整显示
+    lcd_show_chinese(96, 0, "智", LCD_RED, LCD_WHITE, 32, 0);
+    lcd_show_chinese(128, 0, "慧", LCD_RED, LCD_WHITE, 32, 0);
+    lcd_show_chinese(160, 0, "农", LCD_RED, LCD_WHITE, 32, 0);
+    lcd_show_chinese(192, 0, "业", LCD_RED, LCD_WHITE, 32, 0);
+    
     lcd_show_picture(280,0, 32,32, network_state? img_wifi_on : img_wifi_off);
 
     lcd_menu_update(lcd_menus ,lcd_menu_number,menu_select_index);
@@ -396,7 +424,7 @@ void lcd_set_light_state(bool state)
 void lcd_set_motor_state(bool state)
 {
 
-    strcpy(fan_menu.text.name,state? "风扇开" :"风扇关");
+    strcpy(fan_menu.text.name,state? "阀门开" :"阀门关");
     fan_menu.img.img = state? img_fan_on : img_fan_off;
 
 }

@@ -31,8 +31,8 @@ int get_wifi_info(WifiLinkedInfo *info);
 
 #define BUFF_LEN    256
 
-#define ROUTE_SSID "软通教育"
-#define ROUTE_PASSWORD "88888888"
+#define ROUTE_SSID "xiaomoV1"
+#define ROUTE_PASSWORD "15139977792"
 
 int get_wifi_info(WifiLinkedInfo *info)
 {

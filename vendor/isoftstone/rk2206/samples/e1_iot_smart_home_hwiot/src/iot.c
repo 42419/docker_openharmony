@@ -26,11 +26,11 @@
 #include "smart_home_event.h"
 
 
-#define HOST_ADDR "bf4c40ad8d.st1.iotda-device.cn-north-4.myhuaweicloud.com"
+#define HOST_ADDR "029617702d.st1.iotda-device.cn-north-4.myhuaweicloud.com"
 
-#define CLIENT_ID "68ab30d9d582f200184897ea_test001_0_0_2025082415"
-#define DEVICE_ID  "68ab30d9d582f200184897ea_test001"
-#define MQTT_DEVICES_PWD "693e5aa4ca37ac2c8f42a90f48c9a5d70e35136140b652fff774adc7ee2daf1a"
+#define CLIENT_ID "68f0b0a84609c465bf2cd91a_znjj_0_0_2025102115"
+#define DEVICE_ID  "68f0b0a84609c465bf2cd91a_znjj"
+#define MQTT_DEVICES_PWD "834365dd4a76ddbb13a9edbaa0b5e89dda7548290fa792decfa37efb2e0dad18"
 
 #define PUBLISH_TOPIC "$oc/devices/" DEVICE_ID "/sys/properties/report"
 #define SUBCRIB_TOPIC                                                          \
@@ -83,7 +83,7 @@ void send_msg_to_mqtt(e_iot_data *iot_data) {
   if (root != NULL) {
     cJSON *serv_arr = cJSON_AddArrayToObject(root, "services");
     cJSON *arr_item = cJSON_CreateObject();
-    cJSON_AddStringToObject(arr_item, "service_id", "smartHome");
+    cJSON_AddStringToObject(arr_item, "service_id", "smartFarm");
     cJSON *pro_obj = cJSON_CreateObject();
     cJSON_AddItemToObject(arr_item, "properties", pro_obj);
 
@@ -154,7 +154,8 @@ void set_light_state(cJSON *root) {
   event.event=event_iot_cmd;
 
   para_obj = cJSON_GetObjectItem(root, "paras");
-  status_obj = cJSON_GetObjectItem(para_obj, "onoff");
+  // 修复参数字段名称，云端下发的是"switch"而不是"onoff"
+  status_obj = cJSON_GetObjectItem(para_obj, "switch");
   if (status_obj != NULL) {
     value = cJSON_GetStringValue(status_obj);
     if (!strcmp(value, "ON")) {
@@ -183,7 +184,8 @@ void set_motor_state(cJSON *root) {
   event.event=event_iot_cmd;
 
   para_obj = cJSON_GetObjectItem(root, "paras");
-  status_obj = cJSON_GetObjectItem(para_obj, "onoff");
+  // 修复参数字段名称，云端下发的是"switch"而不是"onoff"
+  status_obj = cJSON_GetObjectItem(para_obj, "switch");
   if (status_obj != NULL) {
     value = cJSON_GetStringValue(status_obj);
     if (!strcmp(value, "ON")) {
@@ -198,7 +200,7 @@ void set_motor_state(cJSON *root) {
 }
 
 /***************************************************************
-* 函数名称: set_light_state
+* 函数名称: set_auto_state
 * 说    明: 设置自动模式状态
 * 参    数: cJSON *root
 * 返 回 值: 无
@@ -209,7 +211,8 @@ void set_auto_state(cJSON *root) {
   char *value = NULL;
 
   para_obj = cJSON_GetObjectItem(root, "paras");
-  status_obj = cJSON_GetObjectItem(para_obj, "onoff");
+  // 修复参数字段名称，云端下发的是"switch"而不是"onoff"
+  status_obj = cJSON_GetObjectItem(para_obj, "switch");
   if (status_obj != NULL) {
     value = cJSON_GetStringValue(status_obj);
     if (!strcmp(value, "ON")) {
@@ -244,7 +247,9 @@ void mqtt_message_arrived(MessageData *data) {
 
   // get request id
   request_id_idx = strstr(data->topicName->lenstring.data, "request_id=");
-  strncpy(request_id, request_id_idx + 11, 36);
+  if (request_id_idx != NULL) {
+    strncpy(request_id, request_id_idx + 11, 36);
+  }
   // printf("request_id = %s\n", request_id);
 
   // create response topic
@@ -275,17 +280,36 @@ void mqtt_message_arrived(MessageData *data) {
   root =
       cJSON_ParseWithLength(data->message->payload, data->message->payloadlen);
   if (root != NULL) {
+    printf("JSON parsing successful\n");
     cmd_name = cJSON_GetObjectItem(root, "command_name");
     if (cmd_name != NULL) {
       cmd_name_str = cJSON_GetStringValue(cmd_name);
+      // 添加调试信息，打印接收到的命令名称
+      printf("Received command: %s\n", cmd_name_str);
       if (!strcmp(cmd_name_str, "light_control")) {
+        printf("Processing light_control command\n");
         set_light_state(root);
       } else if (!strcmp(cmd_name_str, "motor_control")) {
+        printf("Processing motor_control command\n");
         set_motor_state(root);
       } else if (!strcmp(cmd_name_str, "auto_control")) {
+        printf("Processing auto_control command\n");
         set_auto_state(root);
+      } else {
+        printf("Unknown command: %s\n", cmd_name_str);
+      }
+    } else {
+      printf("Command name not found in message\n");
+      // 打印整个JSON内容帮助调试
+      char *json_str = cJSON_Print(root);
+      if (json_str) {
+        printf("Full JSON content: %s\n", json_str);
+        cJSON_free(json_str);
       }
     }
+  } else {
+    printf("Failed to parse JSON message\n");
+    printf("Message content: %.*s\n", data->message->payloadlen, (char*)data->message->payload);
   }
 
   cJSON_Delete(root);
