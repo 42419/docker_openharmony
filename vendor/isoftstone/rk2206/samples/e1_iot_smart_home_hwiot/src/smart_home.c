@@ -52,7 +52,7 @@ lcd_menu_t fan_menu={
         .fc=LCD_MAGENTA,
         .bc=LCD_WHITE,
         .font_size=24,
-        .name="阀门关",
+        .name="风扇关",
     },
     .enterFunc=fan_menu_entry,
     .exitFunc=NULL,
@@ -424,7 +424,7 @@ void lcd_set_light_state(bool state)
 void lcd_set_motor_state(bool state)
 {
 
-    strcpy(fan_menu.text.name,state? "阀门开" :"阀门关");
+    strcpy(fan_menu.text.name,state? "风扇开" :"风扇关");
     fan_menu.img.img = state? img_fan_on : img_fan_off;
 
 }
