@@ -349,7 +349,7 @@ void lcd_show_ui(void)
     lcd_menu_show(lcd_menus ,  lcd_menu_number);
     lcd_db_show(lcd_dbs, sizeof(lcd_dbs)/sizeof(lcd_display_board_t *));
 
-    lcd_show_picture(0,176,177,58, img_logo);
+    // lcd_show_picture(0,176,177,58, img_logo);
 }
 
 /***************************************************************
