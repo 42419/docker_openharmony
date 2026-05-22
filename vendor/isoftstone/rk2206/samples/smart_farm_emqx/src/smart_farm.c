@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "smart_home.h"
+#include "smart_farm.h"
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -208,9 +208,9 @@ void lcd_dev_init(void)
  * 
  * @param key_no 按键号
  */
-void smart_home_key_process(int key_no)
+void smart_farm_key_process(int key_no)
 {
-    printf("smart_home_key_process:%d\n",key_no);
+    printf("smart_farm_key_process:%d\n",key_no);
     if(key_no == KEY_UP){
 
     }else if(key_no == KEY_DOWN){
@@ -225,12 +225,12 @@ void smart_home_key_process(int key_no)
 }
 
 /***************************************************************
-* 函数名称: smart_home_iot_cmd_process
+* 函数名称: smart_farm_iot_cmd_process
 * 说    明: 处理来自云端的IoT命令
 * 参    数: int cmd - 命令类型
 * 返 回 值: 无
 ***************************************************************/
-void smart_home_iot_cmd_process(int cmd)
+void smart_farm_iot_cmd_process(int cmd)
 {
     switch (cmd)
     {
@@ -277,7 +277,7 @@ void smart_home_iot_cmd_process(int cmd)
  * 
  * @param su03t_cmd 语音管家的指令
  */
-void smart_home_su03t_cmd_process(int su03t_cmd)
+void smart_farm_su03t_cmd_process(int su03t_cmd)
 {
     switch (su03t_cmd)
     {

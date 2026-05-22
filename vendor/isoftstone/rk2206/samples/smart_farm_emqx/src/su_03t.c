@@ -21,8 +21,8 @@
 #include "iot_errno.h"
 #include "iot_uart.h"
 
-#include "smart_home.h"
-#include "smart_home_event.h"
+#include "smart_farm.h"
+#include "smart_farm_event.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -81,7 +81,7 @@ static void su_03t_thread(void *arg)
         {
             uint16_t command = data[0] << 8 | data[1];
             event.data.su03t_data = command;
-            smart_home_event_send(&event);
+            smart_farm_event_send(&event);
             #if 0
             if (command == auto_state_on)
             {

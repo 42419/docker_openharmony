@@ -18,7 +18,7 @@
 #include "ohos_init.h"
 #include "iot_adc.h"
 #include "iot_errno.h"
-#include "smart_home_event.h"
+#include "smart_farm_event.h"
 #include "adc_key.h"
 
 /* 按键对应ADC通道 */
@@ -119,7 +119,7 @@ void adc_key_thread(uint32_t arg)
         if(key_event.data.key_no != KEY_RELEASE)
         {
             printf("==> send key event: %d\n",key_event.data.key_no);
-            smart_home_event_send(&key_event);
+            smart_farm_event_send(&key_event);
             //只发送一次,避免长按按键重复发送
             key_event.data.key_no = KEY_RELEASE;
         }

@@ -23,20 +23,17 @@
 #include "iot.h"
 #include "los_task.h"
 #include "ohos_init.h"
-#include "smart_home_event.h"
+#include "smart_farm_event.h"
 
 
-#define HOST_ADDR "029617702d.st1.iotda-device.cn-north-4.myhuaweicloud.com"
+#define EMQX_HOST_ADDR "47.99.60.222"
 
-#define CLIENT_ID "68f0b0a84609c465bf2cd91a_znjj_0_0_2025102115"
-#define DEVICE_ID  "68f0b0a84609c465bf2cd91a_znjj"
-#define MQTT_DEVICES_PWD "834365dd4a76ddbb13a9edbaa0b5e89dda7548290fa792decfa37efb2e0dad18"
+#define MQTT_CLIENT_ID "smart_farm_rk2206"
 
-#define PUBLISH_TOPIC "$oc/devices/" DEVICE_ID "/sys/properties/report"
-#define SUBCRIB_TOPIC                                                          \
-  "$oc/devices/" DEVICE_ID "/sys/commands/#" /// request_id={request_id}"
-#define RESPONSE_TOPIC                                                         \
-  "$oc/devices/" DEVICE_ID "/sys/commands/response" /// request_id={request_id}"
+#define PUBLISH_TOPIC   "smart_farm/report"
+#define SUBCRIB_TOPIC   "smart_farm/command"
+#define RESPONSE_TOPIC  "smart_farm/response"
+#define STATUS_TOPIC    "smart_farm/status"
 
 #define MAX_BUFFER_LENGTH 512
 #define MAX_STRING_LENGTH 64
@@ -47,14 +44,16 @@ static unsigned char readBuf[MAX_BUFFER_LENGTH];
 Network network;
 MQTTClient client;
 
-static char mqtt_devid[64]=DEVICE_ID;
-static char mqtt_pwd[80]=MQTT_DEVICES_PWD;
-static char mqtt_username[64]=DEVICE_ID;
-static char mqtt_hostaddr[64]=HOST_ADDR;
+static char mqtt_client_id[64]=MQTT_CLIENT_ID;
+static char mqtt_hostaddr[64]=EMQX_HOST_ADDR;
 
 static char publish_topic[128] = PUBLISH_TOPIC;
 static char subcribe_topic[128] = SUBCRIB_TOPIC;
 static char response_topic[128] = RESPONSE_TOPIC;
+static char status_topic[128] = STATUS_TOPIC;
+
+static char will_payload[] = "{\"status\":\"offline\"}";
+static char online_payload[] = "{\"status\":\"online\"}";
 
 static unsigned int mqttConnectFlag = 0;
 
@@ -78,45 +77,30 @@ void send_msg_to_mqtt(e_iot_data *iot_data) {
     printf("mqtt not connect\n");
     return;
   }
-  
+
   cJSON *root = cJSON_CreateObject();
   if (root != NULL) {
-    cJSON *serv_arr = cJSON_AddArrayToObject(root, "services");
-    cJSON *arr_item = cJSON_CreateObject();
-    cJSON_AddStringToObject(arr_item, "service_id", "smartFarm");
-    cJSON *pro_obj = cJSON_CreateObject();
-    cJSON_AddItemToObject(arr_item, "properties", pro_obj);
-
-    memset(str, 0, MAX_BUFFER_LENGTH);
-    // 光照强度
     sprintf(str, "%5.2fLux", iot_data->illumination);
-    cJSON_AddStringToObject(pro_obj, "illumination", str);
-    // 温度
+    cJSON_AddStringToObject(root, "illumination", str);
     sprintf(str, "%5.2f℃", iot_data->temperature);
-    cJSON_AddStringToObject(pro_obj, "temperature", str);
-    // 湿度
+    cJSON_AddStringToObject(root, "temperature", str);
     sprintf(str, "%5.2f%%", iot_data->humidity);
-    cJSON_AddStringToObject(pro_obj, "humidity", str);
-    // 电机状态
+    cJSON_AddStringToObject(root, "humidity", str);
     if (iot_data->motor_state == true) {
-      cJSON_AddStringToObject(pro_obj, "motorStatus", "ON");
+      cJSON_AddStringToObject(root, "motorStatus", "ON");
     } else {
-      cJSON_AddStringToObject(pro_obj, "motorStatus", "OFF");
+      cJSON_AddStringToObject(root, "motorStatus", "OFF");
     }
-    // 灯光状态
     if (iot_data->light_state == true) {
-      cJSON_AddStringToObject(pro_obj, "lightStatus", "ON");
+      cJSON_AddStringToObject(root, "lightStatus", "ON");
     } else {
-      cJSON_AddStringToObject(pro_obj, "lightStatus", "OFF");
+      cJSON_AddStringToObject(root, "lightStatus", "OFF");
     }
-    // 自动状态模式
     if (iot_data->auto_state == true) {
-      cJSON_AddStringToObject(pro_obj, "autoStatus", "ON");
+      cJSON_AddStringToObject(root, "autoStatus", "ON");
     } else {
-      cJSON_AddStringToObject(pro_obj, "autoStatus", "OFF");
+      cJSON_AddStringToObject(root, "autoStatus", "OFF");
     }
-
-    cJSON_AddItemToArray(serv_arr, arr_item);
 
     char *palyload_str = cJSON_PrintUnformatted(root);
     strcpy(payload, palyload_str);
@@ -130,7 +114,6 @@ void send_msg_to_mqtt(e_iot_data *iot_data) {
   message.payload = payload;
   message.payloadlen = strlen(payload);
 
-  sprintf(publish_topic,"$oc/devices/%s/sys/properties/report",mqtt_devid);
   if ((rc = MQTTPublish(&client, publish_topic, &message)) != 0) {
     printf("Return code from MQTT publish is %d\n", rc);
     mqttConnectFlag = 0;
@@ -165,7 +148,7 @@ void set_light_state(cJSON *root) {
       event.data.iot_data = IOT_CMD_LIGHT_OFF;
       // light_state = false;
     }
-    smart_home_event_send(&event);
+    smart_farm_event_send(&event);
   }
 }
 
@@ -195,7 +178,7 @@ void set_motor_state(cJSON *root) {
       // motor_state = false;
       event.data.iot_data = IOT_CMD_MOTOR_OFF;
     }
-    smart_home_event_send(&event);
+    smart_farm_event_send(&event);
   }
 }
 
@@ -230,53 +213,14 @@ void set_auto_state(cJSON *root) {
 * 返 回 值: 无
 ***************************************************************/
 void mqtt_message_arrived(MessageData *data) {
-  int rc;
   cJSON *root = NULL;
   cJSON *cmd_name = NULL;
   char *cmd_name_str = NULL;
-  char *request_id_idx = NULL;
-  char request_id[40] = {0};
-  MQTTMessage message;
-  char payload[MAX_BUFFER_LENGTH];
-  
-  char rsptopic[128] = {0};
 
   printf("Message arrived on topic %.*s: %.*s\n",
          data->topicName->lenstring.len, data->topicName->lenstring.data,
          data->message->payloadlen, data->message->payload);
 
-  // get request id
-  request_id_idx = strstr(data->topicName->lenstring.data, "request_id=");
-  if (request_id_idx != NULL) {
-    strncpy(request_id, request_id_idx + 11, 36);
-  }
-  // printf("request_id = %s\n", request_id);
-
-  // create response topic
-  sprintf(response_topic,"$oc/devices/%s/sys/commands/response",mqtt_devid);
-  sprintf(rsptopic, "%s/request_id=%s", response_topic, request_id);
-  // printf("rsptopic = %s\n", rsptopic);
-
-  // response message
-  message.qos = 0;
-  message.retained = 0;
-  message.payload = payload;
-  sprintf(payload, "{ \
-    \"result_code\": 0, \
-    \"response_name\": \"COMMAND_RESPONSE\", \
-    \"paras\": { \
-        \"result\": \"success\" \
-    } \
-    }");
-  message.payloadlen = strlen(payload);
-
-  // publish the msg to responese topic
-  if ((rc = MQTTPublish(&client, rsptopic, &message)) != 0) {
-    printf("Return code from MQTT publish is %d\n", rc);
-    mqttConnectFlag = 0;
-  }
-
-  /*{"command_name":"cmd","paras":{"cmd_value":"1"},"service_id":"server"}*/
   root =
       cJSON_ParseWithLength(data->message->payload, data->message->payloadlen);
   if (root != NULL) {
@@ -284,7 +228,6 @@ void mqtt_message_arrived(MessageData *data) {
     cmd_name = cJSON_GetObjectItem(root, "command_name");
     if (cmd_name != NULL) {
       cmd_name_str = cJSON_GetStringValue(cmd_name);
-      // 添加调试信息，打印接收到的命令名称
       printf("Received command: %s\n", cmd_name_str);
       if (!strcmp(cmd_name_str, "light_control")) {
         printf("Processing light_control command\n");
@@ -300,7 +243,6 @@ void mqtt_message_arrived(MessageData *data) {
       }
     } else {
       printf("Command name not found in message\n");
-      // 打印整个JSON内容帮助调试
       char *json_str = cJSON_Print(root);
       if (json_str) {
         printf("Full JSON content: %s\n", json_str);
@@ -341,39 +283,32 @@ int wait_message() {
 void mqtt_init() {
   int rc;
 
-  printf("Starting MQTT...\n");
+  printf("Starting MQTT connection to EMQX at %s:1883...\n", mqtt_hostaddr);
 
-  /*网络初始化*/
   NetworkInit(&network);
 
 begin:
-  /* 连接网络*/
-  printf("NetworkConnect  ...\n");
-  NetworkConnect(&network, HOST_ADDR, 1883);
-  printf("MQTTClientInit  ...\n");
-  /*MQTT客户端初始化*/
+  printf("NetworkConnect ...\n");
+  NetworkConnect(&network, mqtt_hostaddr, 1883);
+  printf("MQTTClientInit ...\n");
   MQTTClientInit(&client, &network, 2000, sendBuf, sizeof(sendBuf), readBuf,
                  sizeof(readBuf));
 
   MQTTString clientId = MQTTString_initializer;
-  clientId.cstring = CLIENT_ID;
-
-  MQTTString userName = MQTTString_initializer;
-  userName.cstring = mqtt_username;
-
-  MQTTString password = MQTTString_initializer;
-  password.cstring = mqtt_pwd;
+  clientId.cstring = mqtt_client_id;
 
   MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
   data.clientID = clientId;
-  data.username = userName;
-  data.password = password;
-  data.willFlag = 0;
+  data.willFlag = 1;
+  data.will.topicName.cstring = status_topic;
+  data.will.message.cstring = will_payload;
+  data.will.qos = 1;
+  data.will.retained = 1;
   data.MQTTVersion = 4;
   data.keepAliveInterval = 60;
   data.cleansession = 1;
 
-  printf("MQTTConnect  ...\n");
+  printf("MQTTConnect ...\n");
   rc = MQTTConnect(&client, &data);
   if (rc != 0) {
     printf("MQTTConnect: %d\n", rc);
@@ -383,8 +318,7 @@ begin:
     goto begin;
   }
 
-  printf("MQTTSubscribe  ...\n");
-  sprintf(subcribe_topic,"$oc/devices/%s/sys/commands/#",mqtt_devid);
+  printf("MQTTSubscribe ...\n");
   rc = MQTTSubscribe(&client, subcribe_topic, 0, mqtt_message_arrived);
   if (rc != 0) {
     printf("MQTTSubscribe: %d\n", rc);
@@ -393,6 +327,18 @@ begin:
   }
 
   mqttConnectFlag = 1;
+
+  MQTTMessage status_msg;
+  status_msg.qos = 1;
+  status_msg.retained = 1;
+  status_msg.payload = online_payload;
+  status_msg.payloadlen = strlen(online_payload);
+  rc = MQTTPublish(&client, status_topic, &status_msg);
+  if (rc != 0) {
+    printf("Online status publish failed: %d\n", rc);
+  }
+
+  printf("MQTT connected to EMQX successfully!\n");
 }
 
 /***************************************************************

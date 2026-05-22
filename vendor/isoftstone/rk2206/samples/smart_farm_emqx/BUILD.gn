@@ -11,13 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-static_library("iot_smart_home_example") {
+static_library("iot_smart_farm_example") {
   sources = [
-    "iot_smart_home_example.c",
+    "iot_smart_farm_example.c",
     "src/lcd.c",
     "src/components.c",
-    "src/smart_home.c",
-    "src/smart_home_event.c",
+    "src/smart_farm.c",
+    "src/smart_farm_event.c",
     "src/su_03t.c",
     "src/iot.c" ,
     "src/picture.c" ,

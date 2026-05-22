@@ -27,8 +27,8 @@ typedef struct event_info
     } data;
 } event_info_t;
 
-void smart_home_event_init();
-void smart_home_event_send(event_info_t *event);
-int smart_home_event_wait(event_info_t *event,int timeoutMs);
+void smart_farm_event_init();
+void smart_farm_event_send(event_info_t *event);
+int smart_farm_event_wait(event_info_t *event,int timeoutMs);
 
 #endif

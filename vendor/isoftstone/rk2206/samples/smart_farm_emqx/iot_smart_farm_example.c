@@ -20,8 +20,8 @@
 #include "ohos_init.h"
 #include "cmsis_os.h"
 #include "config_network.h"
-#include "smart_home.h"
-#include "smart_home_event.h"
+#include "smart_farm.h"
+#include "smart_farm_event.h"
 #include "su_03t.h"
 #include "iot.h"
 #include "lcd.h"
@@ -117,12 +117,12 @@ reconnect:
 
 
 /***************************************************************
- * 函数名称: smart_home_thread
+ * 函数名称: smart_farm_thread
  * 说    明: 智慧家居主线程
  * 参    数: 无
  * 返 回 值: 无
  ***************************************************************/
-void smart_home_thread(void *arg)
+void smart_farm_thread(void *arg)
 {
     double *data_ptr = NULL;
 
@@ -145,21 +145,21 @@ void smart_home_thread(void *arg)
     {
         event_info_t event_info = {0};
         //等待事件触发,如有触发,则立即处理对应事件,如未等到,则执行默认的代码逻辑,更新屏幕
-        int ret = smart_home_event_wait(&event_info,3000);
+        int ret = smart_farm_event_wait(&event_info,3000);
         if(ret == LOS_OK){
             //收到指令
             printf("event recv %d ,%d\n",event_info.event,event_info.data.iot_data);
             switch (event_info.event)
             {
                 case event_key_press:
-                    smart_home_key_process(event_info.data.key_no);
+                    smart_farm_key_process(event_info.data.key_no);
                     
                     break;
                 case event_iot_cmd:
-                    smart_home_iot_cmd_process(event_info.data.iot_data);
+                    smart_farm_iot_cmd_process(event_info.data.iot_data);
                     break;
                 case event_su03t:
-                    smart_home_su03t_cmd_process(event_info.data.su03t_data);
+                    smart_farm_su03t_cmd_process(event_info.data.su03t_data);
                     break;
                default:break;
             }
@@ -217,12 +217,12 @@ void smart_home_thread(void *arg)
 // }
 
 /***************************************************************
- * 函数名称: iot_smart_home_example
+ * 函数名称: iot_smart_farm_example
  * 说    明: 开机自启动调用函数
  * 参    数: 无
  * 返 回 值: 无
  ***************************************************************/
-void iot_smart_home_example()
+void iot_smart_farm_example()
 {
     unsigned int thread_id_1;
     unsigned int thread_id_2;
@@ -232,7 +232,7 @@ void iot_smart_home_example()
     TSK_INIT_PARAM_S task_3 = {0};
     unsigned int ret = LOS_OK;
     
-    smart_home_event_init();
+    smart_farm_event_init();
     
     // ret = LOS_QueueCreate("su03_queue", MSG_QUEUE_LENGTH, &m_su03_msg_queue, 0, BUFFER_LEN);
     // if (ret != LOS_OK)
@@ -241,7 +241,7 @@ void iot_smart_home_example()
     //     return;
     // }
 
-    task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_home_thread;
+    task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_farm_thread;
     task_1.uwStackSize = 2048;
     task_1.pcName = "smart home thread";
     task_1.usTaskPrio = 24;
@@ -276,4 +276,4 @@ void iot_smart_home_example()
     }
 }
 
-APP_FEATURE_INIT(iot_smart_home_example);
+APP_FEATURE_INIT(iot_smart_farm_example);

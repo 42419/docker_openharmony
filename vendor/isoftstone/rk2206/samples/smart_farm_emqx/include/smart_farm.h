@@ -41,8 +41,8 @@ void lcd_set_light_state(bool state);
 void lcd_set_motor_state(bool state);
 void lcd_set_auto_state(bool state);
 
-void smart_home_su03t_cmd_process(int su03t_cmd);
-void smart_home_iot_cmd_process(int iot_cmd);
-void smart_home_key_press_process(uint8_t key_no);
+void smart_farm_su03t_cmd_process(int su03t_cmd);
+void smart_farm_iot_cmd_process(int iot_cmd);
+void smart_farm_key_press_process(uint8_t key_no);
 
 #endif

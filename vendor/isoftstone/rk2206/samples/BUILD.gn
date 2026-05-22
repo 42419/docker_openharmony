@@ -65,7 +65,7 @@ lite_component("app") {
 
         # Iot综合实验类
         # "./e1_iot_smart_home:iot_smart_home_example",
-        "./e1_iot_smart_home_hwiot:iot_smart_home_example",
+        "./smart_farm_emqx:iot_smart_farm_example",
         # "./e2_iot_smart_security:iot_smart_security_example",
     ]
 
