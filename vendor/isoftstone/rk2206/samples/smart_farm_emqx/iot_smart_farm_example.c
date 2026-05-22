@@ -34,8 +34,7 @@
 
 #define MSG_QUEUE_LENGTH                                16
 #define BUFFER_LEN                                      50
-#define WIFI_CONNECT_RETRY_COUNT                        3
-#define WIFI_CONNECT_RETRY_DELAY                        3000
+#define WIFI_RETRY_DELAY                               5000
 
 
 /***************************************************************
@@ -58,56 +57,54 @@ void iot_thread(void *args) {
   // 尝试从Flash获取配置
   if (VendorGet(VENDOR_ID_WIFI_ROUTE_SSID, ssid, sizeof(ssid)) != 0 || 
       strlen(ssid) == 0) {
-      // 如果Flash中没有配置或读取失败，使用默认配置
       strncpy(ssid, DEFAULT_ROUTE_SSID, sizeof(ssid) - 1);
-      printf("Using default SSID: %s\n", ssid);
+      printf("[WiFi] 使用默认 SSID: %s\n", ssid);
   }
   
   if (VendorGet(VENDOR_ID_WIFI_ROUTE_PASSWD, password, sizeof(password)) != 0 || 
       strlen(password) == 0) {
-      // 如果Flash中没有配置或读取失败，使用默认配置
       strncpy(password, DEFAULT_ROUTE_PASSWORD, sizeof(password) - 1);
-      printf("Using default password: %s\n", password);
+      printf("[WiFi] 使用默认密码\n");
   }
 
-  VendorSet(VENDOR_ID_WIFI_MODE, "STA", 3); // 配置为Wifi STA模式
-  VendorSet(VENDOR_ID_MAC, mac_address, 6); // 多人同时做该实验，请修改各自不同的WiFi MAC地址
+  VendorSet(VENDOR_ID_WIFI_MODE, "STA", 3);
+  VendorSet(VENDOR_ID_MAC, mac_address, 6);
   VendorSet(VENDOR_ID_WIFI_ROUTE_SSID, ssid, strlen(ssid) + 1);
   VendorSet(VENDOR_ID_WIFI_ROUTE_PASSWD, password, strlen(password) + 1);
 
   int wifi_retry_count = 0;
-  
+
 reconnect:
-  if (wifi_retry_count >= WIFI_CONNECT_RETRY_COUNT) {
-    printf("WiFi connection failed after %d attempts.\n", WIFI_CONNECT_RETRY_COUNT);
-    printf("Please check:\n");
-    printf("1. SSID: %s exists and is accessible\n", ssid);
-    printf("2. Password: %s is correct\n", password);
-    printf("3. WiFi signal strength is sufficient\n");
-    printf("4. Router is functioning properly\n");
-    return;
-  }
-  
   SetWifiModeOff();
-  printf("Attempting to connect to WiFi (attempt %d/%d)...\n", wifi_retry_count + 1, WIFI_CONNECT_RETRY_COUNT);
-  printf("SSID: %s\n", ssid);
-  // 出于安全原因，不打印密码到日志中
-  // printf("Password: %s\n", password);
-  
+  printf("[WiFi] 第 %d 次尝试连接 %s ...\n",
+         wifi_retry_count + 1, ssid);
+
   int ret = SetWifiModeOn();
   if(ret != 0){
-    printf("WiFi connect failed, error code: %d. Retrying in %d ms...\n", ret, WIFI_CONNECT_RETRY_DELAY);
+    printf("[WiFi] 连接失败, 错误码: %d, 5秒后重试...\n", ret);
     wifi_retry_count++;
-    LOS_Msleep(WIFI_CONNECT_RETRY_DELAY);
+    LOS_Msleep(WIFI_RETRY_DELAY);
     goto reconnect;
   }
-  
-  printf("WiFi connected successfully!\n");
+
+  unsigned char ip[4] = {0};
+  VendorGet(VENDOR_ID_NET_IP, ip, 4);
+  printf("\n");
+  printf("========================================\n");
+  printf("||       网络连接成功                  ||\n");
+  printf("||  WiFi: %s\n", ssid);
+  printf("||  IP : %d.%d.%d.%d\n", ip[0], ip[1], ip[2], ip[3]);
+  printf("||  MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
+         mac_address[0], mac_address[1], mac_address[2],
+         mac_address[3], mac_address[4], mac_address[5]);
+  printf("||  EMQX: %s:1883\n", EMQX_HOST_ADDR);
+  printf("========================================\n\n");
+
   mqtt_init();
 
   while (1) {
     if (!wait_message()) {
-      printf("MQTT connection lost. Reconnecting to WiFi...\n");
+      printf("[EMQX] 连接断开, 重新连接 WiFi...\n");
       wifi_retry_count = 0; // Reset retry count for next connection
       goto reconnect;
     }
@@ -124,13 +121,14 @@ reconnect:
  ***************************************************************/
 void smart_farm_thread(void *arg)
 {
-    double *data_ptr = NULL;
-
-    double illumination_range = 50.0;
-    double temperature_range = 35.0;
-    double humidity_range = 80.0;
-
     e_iot_data iot_data = {0};
+    UINT32 last_upload_tick = 0;
+    UINT32 upload_interval;
+    UINT32 sensor_interval;
+    UINT32 last_sensor_tick = 0;
+
+    upload_interval = LOS_MS2Tick(2000);
+    sensor_interval = LOS_MS2Tick(1000);
 
     i2c_dev_init();
     lcd_dev_init();
@@ -138,55 +136,65 @@ void smart_farm_thread(void *arg)
     light_dev_init();
     su03t_init();
 
-    // lcd_load_ui();
     lcd_show_ui();
 
     while(1)
     {
+        UINT32 now = osKernelGetTickCount();
+
         event_info_t event_info = {0};
-        //等待事件触发,如有触发,则立即处理对应事件,如未等到,则执行默认的代码逻辑,更新屏幕
-        int ret = smart_farm_event_wait(&event_info,3000);
+        int ret = smart_farm_event_wait(&event_info, 200);
         if(ret == LOS_OK){
-            //收到指令
-            printf("event recv %d ,%d\n",event_info.event,event_info.data.iot_data);
+            printf("[事件] 类型=%d 数据=%d\n", event_info.event, event_info.data.iot_data);
             switch (event_info.event)
             {
                 case event_key_press:
                     smart_farm_key_process(event_info.data.key_no);
-                    
                     break;
                 case event_iot_cmd:
                     smart_farm_iot_cmd_process(event_info.data.iot_data);
+                    if (mqtt_is_connected()) {
+                        iot_data.light_state = get_light_state();
+                        iot_data.motor_state = get_motor_state();
+                        send_msg_to_mqtt(&iot_data);
+                        last_upload_tick = osKernelGetTickCount();
+                        printf("[IoT] 状态变化，立即上报\n");
+                    }
                     break;
                 case event_su03t:
                     smart_farm_su03t_cmd_process(event_info.data.su03t_data);
                     break;
                default:break;
             }
-
         }
 
-        double temp,humi,lum;
+        now = osKernelGetTickCount();
+        if (now - last_sensor_tick >= sensor_interval) {
+            double temp, humi, lum;
+            sht30_read_data(&temp, &humi);
+            bh1750_read_data(&lum);
+            lcd_set_illumination(lum);
+            lcd_set_temperature(temp);
+            lcd_set_humidity(humi);
 
-        sht30_read_data(&temp,&humi);
-        bh1750_read_data(&lum);
-
-        lcd_set_illumination(lum);
-        lcd_set_temperature(temp);
-        lcd_set_humidity(humi);
-        if (mqtt_is_connected()) 
-        {
-            // 发送iot数据
             iot_data.illumination = lum;
             iot_data.temperature = temp;
             iot_data.humidity = humi;
             iot_data.light_state = get_light_state();
             iot_data.motor_state = get_motor_state();
-            // iot_data.auto_state = auto_state;
-            send_msg_to_mqtt(&iot_data);
 
+            last_sensor_tick = now;
+        }
+
+        if (mqtt_is_connected())
+        {
             lcd_set_network_state(true);
-        }else{  
+
+            if (now - last_upload_tick >= upload_interval) {
+                send_msg_to_mqtt(&iot_data);
+                last_upload_tick = now;
+            }
+        } else {
             lcd_set_network_state(false);
         }
 
@@ -224,6 +232,10 @@ void smart_farm_thread(void *arg)
  ***************************************************************/
 void iot_smart_farm_example()
 {
+    printf("========================================\n");
+    printf("||         智慧农场 IoT 系统           ||\n");
+    printf("========================================\n");
+
     unsigned int thread_id_1;
     unsigned int thread_id_2;
     unsigned int thread_id_3;
@@ -233,23 +245,27 @@ void iot_smart_farm_example()
     unsigned int ret = LOS_OK;
     
     smart_farm_event_init();
-    
-    // ret = LOS_QueueCreate("su03_queue", MSG_QUEUE_LENGTH, &m_su03_msg_queue, 0, BUFFER_LEN);
-    // if (ret != LOS_OK)
-    // {
-    //     printf("Falied to create Message Queue ret:0x%x\n", ret);
-    //     return;
-    // }
+
+    task_3.pfnTaskEntry = (TSK_ENTRY_FUNC)iot_thread;
+    task_3.uwStackSize = 20480*5;
+    task_3.pcName = "iot thread";
+    task_3.usTaskPrio = 22;
+    ret = LOS_TaskCreate(&thread_id_3, &task_3);
+    if (ret != LOS_OK)
+    {
+        printf("[错误] 任务创建失败 ret:0x%x\n", ret);
+        return;
+    }
 
     task_1.pfnTaskEntry = (TSK_ENTRY_FUNC)smart_farm_thread;
     task_1.uwStackSize = 2048;
-    task_1.pcName = "smart home thread";
+    task_1.pcName = "smart farm thread";
     task_1.usTaskPrio = 24;
     
     ret = LOS_TaskCreate(&thread_id_1, &task_1);
     if (ret != LOS_OK)
     {
-        printf("Falied to create task ret:0x%x\n", ret);
+        printf("[错误] 任务创建失败 ret:0x%x\n", ret);
         return;
     }
 
@@ -260,18 +276,7 @@ void iot_smart_farm_example()
     ret = LOS_TaskCreate(&thread_id_2, &task_2);
     if (ret != LOS_OK)
     {
-        printf("Falied to create task ret:0x%x\n", ret);
-        return;
-    }
-
-    task_3.pfnTaskEntry = (TSK_ENTRY_FUNC)iot_thread;
-    task_3.uwStackSize = 20480*5;
-    task_3.pcName = "iot thread";
-    task_3.usTaskPrio = 24;
-    ret = LOS_TaskCreate(&thread_id_3, &task_3);
-    if (ret != LOS_OK)
-    {
-        printf("Falied to create task ret:0x%x\n", ret);
+        printf("[错误] 任务创建失败 ret:0x%x\n", ret);
         return;
     }
 }

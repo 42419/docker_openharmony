@@ -26,8 +26,6 @@
 #include "smart_farm_event.h"
 
 
-#define EMQX_HOST_ADDR "47.99.60.222"
-
 #define MQTT_CLIENT_ID "smart_farm_rk2206"
 
 #define PUBLISH_TOPIC   "smart_farm/report"
@@ -74,7 +72,7 @@ void send_msg_to_mqtt(e_iot_data *iot_data) {
   char str[MAX_STRING_LENGTH] = {0};
 
   if (mqttConnectFlag == 0) {
-    printf("mqtt not connect\n");
+    printf("[EMQX] 未连接，跳过数据上报\n");
     return;
   }
 
@@ -115,10 +113,10 @@ void send_msg_to_mqtt(e_iot_data *iot_data) {
   message.payloadlen = strlen(payload);
 
   if ((rc = MQTTPublish(&client, publish_topic, &message)) != 0) {
-    printf("Return code from MQTT publish is %d\n", rc);
+    printf("[EMQX] 上报失败, 错误码: %d\n", rc);
     mqttConnectFlag = 0;
   } else {
-    printf("mqtt publish success:%s\n", payload);
+    printf("[EMQX] 上报成功: %s\n", payload);
   }
 }
 
@@ -217,41 +215,41 @@ void mqtt_message_arrived(MessageData *data) {
   cJSON *cmd_name = NULL;
   char *cmd_name_str = NULL;
 
-  printf("Message arrived on topic %.*s: %.*s\n",
+  printf("[EMQX] 收到指令 [%.*s]: %.*s\n",
          data->topicName->lenstring.len, data->topicName->lenstring.data,
          data->message->payloadlen, data->message->payload);
 
   root =
       cJSON_ParseWithLength(data->message->payload, data->message->payloadlen);
   if (root != NULL) {
-    printf("JSON parsing successful\n");
+    printf("  JSON 解析成功\n");
     cmd_name = cJSON_GetObjectItem(root, "command_name");
     if (cmd_name != NULL) {
       cmd_name_str = cJSON_GetStringValue(cmd_name);
-      printf("Received command: %s\n", cmd_name_str);
+      printf("  收到指令: %s\n", cmd_name_str);
       if (!strcmp(cmd_name_str, "light_control")) {
-        printf("Processing light_control command\n");
+        printf("  执行灯光控制指令\n");
         set_light_state(root);
       } else if (!strcmp(cmd_name_str, "motor_control")) {
-        printf("Processing motor_control command\n");
+        printf("  执行电机控制指令\n");
         set_motor_state(root);
       } else if (!strcmp(cmd_name_str, "auto_control")) {
-        printf("Processing auto_control command\n");
+        printf("  执行自动模式控制指令\n");
         set_auto_state(root);
       } else {
-        printf("Unknown command: %s\n", cmd_name_str);
+        printf("  ! 未知指令: %s\n", cmd_name_str);
       }
     } else {
-      printf("Command name not found in message\n");
+      printf("  ! 消息中未找到指令名称\n");
       char *json_str = cJSON_Print(root);
       if (json_str) {
-        printf("Full JSON content: %s\n", json_str);
+        printf("  完整JSON: %s\n", json_str);
         cJSON_free(json_str);
       }
     }
   } else {
-    printf("Failed to parse JSON message\n");
-    printf("Message content: %.*s\n", data->message->payloadlen, (char*)data->message->payload);
+    printf("  ! JSON 解析失败\n");
+    printf("  消息内容: %.*s\n", data->message->payloadlen, (char*)data->message->payload);
   }
 
   cJSON_Delete(root);
@@ -283,14 +281,14 @@ int wait_message() {
 void mqtt_init() {
   int rc;
 
-  printf("Starting MQTT connection to EMQX at %s:1883...\n", mqtt_hostaddr);
+  printf("[EMQX] 正在连接服务器 %s:1883...\n", mqtt_hostaddr);
 
   NetworkInit(&network);
 
 begin:
-  printf("NetworkConnect ...\n");
+  printf("[EMQX] 网络连接中...\n");
   NetworkConnect(&network, mqtt_hostaddr, 1883);
-  printf("MQTTClientInit ...\n");
+  printf("[EMQX] 客户端初始化...\n");
   MQTTClientInit(&client, &network, 2000, sendBuf, sizeof(sendBuf), readBuf,
                  sizeof(readBuf));
 
@@ -308,20 +306,20 @@ begin:
   data.keepAliveInterval = 60;
   data.cleansession = 1;
 
-  printf("MQTTConnect ...\n");
+  printf("[EMQX] 正在认证...\n");
   rc = MQTTConnect(&client, &data);
   if (rc != 0) {
-    printf("MQTTConnect: %d\n", rc);
+    printf("[EMQX] 认证失败, 错误码: %d\n", rc);
     NetworkDisconnect(&network);
     MQTTDisconnect(&client);
     osDelay(200);
     goto begin;
   }
 
-  printf("MQTTSubscribe ...\n");
+  printf("[EMQX] 订阅主题中...\n");
   rc = MQTTSubscribe(&client, subcribe_topic, 0, mqtt_message_arrived);
   if (rc != 0) {
-    printf("MQTTSubscribe: %d\n", rc);
+    printf("[EMQX] 订阅失败, 错误码: %d\n", rc);
     osDelay(200);
     goto begin;
   }
@@ -335,10 +333,10 @@ begin:
   status_msg.payloadlen = strlen(online_payload);
   rc = MQTTPublish(&client, status_topic, &status_msg);
   if (rc != 0) {
-    printf("Online status publish failed: %d\n", rc);
+    printf("[EMQX] 上线状态发布失败: %d\n", rc);
   }
 
-  printf("MQTT connected to EMQX successfully!\n");
+  printf("[EMQX] 连接成功!\n");
 }
 
 /***************************************************************

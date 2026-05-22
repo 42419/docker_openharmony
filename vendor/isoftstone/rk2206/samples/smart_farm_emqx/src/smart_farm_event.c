@@ -13,7 +13,7 @@ void smart_farm_event_init(){
     ret = LOS_QueueCreate("eventQ", EVENT_QUEUE_LENGTH, &event_queue_id, 0, BUFFER_LEN);
     if (ret != LOS_OK)
     {
-        printf("Falied to create Message Queue ret:0x%x\n", ret);
+        printf("[错误] 消息队列创建失败 ret:0x%x\n", ret);
         return;
     }
 }

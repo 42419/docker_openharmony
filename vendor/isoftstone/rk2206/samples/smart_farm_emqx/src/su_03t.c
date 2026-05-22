@@ -64,7 +64,7 @@ static void su_03t_thread(void *arg)
     ret = IoTUartInit(UART2_HANDLE, &attr);
     if (ret != IOT_SUCCESS)
     {
-        printf("%s, %d: IoTUartInit(%d) failed!\n", __FILE__, __LINE__, ret);
+        printf("[错误] UART 初始化失败 (%d)\n", ret);
         return;
     }
 
@@ -177,7 +177,7 @@ void su03t_init(void)
     ret = LOS_TaskCreate(&thread_id, &task);
     if (ret != LOS_OK)
     {
-        printf("Falied to create task ret:0x%x\n", ret);
+        printf("[错误] 任务创建失败 ret:0x%x\n", ret);
         return;
     }
 }

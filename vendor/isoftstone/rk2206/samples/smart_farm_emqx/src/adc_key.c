@@ -39,7 +39,7 @@ static unsigned int adc_dev_init()
 
     if(ret != IOT_SUCCESS)
     {
-        printf("%s, %s, %d: ADC Init fail\n", __FILE__, __func__, __LINE__);
+        printf("[错误] ADC 初始化失败\n");
     }
 
     return 0;
@@ -61,7 +61,7 @@ static float adc_get_voltage()
 
     if (ret != IOT_SUCCESS)
     {
-        printf("%s, %s, %d: ADC Read Fail\n", __FILE__, __func__, __LINE__);
+        printf("[错误] ADC 读取失败\n");
         return 0.0;
     }
 
@@ -118,7 +118,7 @@ void adc_key_thread(uint32_t arg)
 
         if(key_event.data.key_no != KEY_RELEASE)
         {
-            printf("==> send key event: %d\n",key_event.data.key_no);
+            printf("[按键] 发送按键事件: %d\n", key_event.data.key_no);
             smart_farm_event_send(&key_event);
             //只发送一次,避免长按按键重复发送
             key_event.data.key_no = KEY_RELEASE;
@@ -148,7 +148,7 @@ void adc_example()
     ret = LOS_TaskCreate(&thread_id, &task);
     if (ret != LOS_OK)
     {
-        printf("Falied to create task ret:0x%x\n", ret);
+        printf("[错误] 任务创建失败 ret:0x%x\n", ret);
         return;
     }
 }

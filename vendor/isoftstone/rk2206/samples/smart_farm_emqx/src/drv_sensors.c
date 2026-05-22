@@ -22,7 +22,7 @@ static uint32_t sht30_init(void)
     ret = IoTI2cWrite(I2C_HANDLE, SHT30_I2C_ADDRESS, send_data, send_len); 
     if (ret != IOT_SUCCESS)
     {
-        printf("I2c write failure.\r\n");
+        printf("[错误] I2C 写入失败\n");
         return IOT_FAILURE;
     }
 
@@ -44,7 +44,7 @@ static uint32_t bh1750_init(void)
     ret = IoTI2cWrite(I2C_HANDLE, SHT30_I2C_ADDRESS, send_data, send_len); 
     if (ret != IOT_SUCCESS)
     {
-        printf("I2c write failure.\r\n");
+        printf("[错误] I2C 写入失败\n");
         return IOT_FAILURE;
     }
 

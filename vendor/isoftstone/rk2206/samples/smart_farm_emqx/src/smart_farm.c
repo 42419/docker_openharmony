@@ -210,7 +210,7 @@ void lcd_dev_init(void)
  */
 void smart_farm_key_process(int key_no)
 {
-    printf("smart_farm_key_process:%d\n",key_no);
+    printf("[按键] key_no=%d\n", key_no);
     if(key_no == KEY_UP){
 
     }else if(key_no == KEY_DOWN){
@@ -235,39 +235,35 @@ void smart_farm_iot_cmd_process(int cmd)
     switch (cmd)
     {
         case IOT_CMD_LIGHT_ON:
-            printf("Processing IOT_CMD_LIGHT_ON\n");
-            // 直接调用控制硬件的函数
+            printf("[IoT] 执行灯光开\n");
             light_set_state(true);
             lcd_set_light_state(true);
             lcd_show_ui();
             break;
             
         case IOT_CMD_LIGHT_OFF:
-            printf("Processing IOT_CMD_LIGHT_OFF\n");
-            // 直接调用控制硬件的函数
+            printf("[IoT] 执行灯光关\n");
             light_set_state(false);
             lcd_set_light_state(false);
             lcd_show_ui();
             break;
             
         case IOT_CMD_MOTOR_ON:
-            printf("Processing IOT_CMD_MOTOR_ON\n");
-            // 直接调用控制硬件的函数
+            printf("[IoT] 执行电机开\n");
             motor_set_state(true);
             lcd_set_motor_state(true);
             lcd_show_ui();
             break;
             
         case IOT_CMD_MOTOR_OFF:
-            printf("Processing IOT_CMD_MOTOR_OFF\n");
-            // 直接调用控制硬件的函数
+            printf("[IoT] 执行电机关\n");
             motor_set_state(false);
             lcd_set_motor_state(false);
             lcd_show_ui();
             break;
             
         default:
-            printf("Unknown IoT command: %d\n", cmd);
+            printf("[IoT] 未知指令: %d\n", cmd);
             break;
     }
 }

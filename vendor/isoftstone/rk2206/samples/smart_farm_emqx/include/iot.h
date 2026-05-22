@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define EMQX_HOST_ADDR "47.99.60.222"
+
 typedef struct
 {
     double illumination;

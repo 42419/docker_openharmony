@@ -458,8 +458,7 @@ unsigned int lcd_init()
     ret = IoTSpiInit(LCD_SPI_BUS, &iot_spi);
     if (ret != IOT_SUCCESS)
     {
-        printf("%s, %s, %d: Spi init failed!\n",
-         __FILE__, __func__, __LINE__);
+        printf("[错误] SPI 初始化失败\n");
         return IOT_FAILURE;
     }
 #else
